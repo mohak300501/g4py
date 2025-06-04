@@ -1,0 +1,11 @@
+example_det
+1
+proton
+0
+100.*GeV
+0.5*m
+0.5*m
+0.5*m
+0.4*m
+0.4*m
+0.01*m

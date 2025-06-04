@@ -1,0 +1,59 @@
+QWidget {
+    font-size: %spx;
+    font-family: "MS Reference Sans Serif";
+    background: white; color: black;
+}
+
+QMenuBar, QMenu, QStatusBar {
+    background: #ECECEC;
+}
+
+QMenu::item::selected {
+    background: darkblue; color: white;
+}
+
+QMenu::item::disabled {
+    color: grey;
+}
+
+QPushButton#red_btn {
+    background: #8F0000; color: white;
+}
+
+QPushButton#blu_btn {
+    background: #0011FF; color: white;
+}
+
+QDialogButtonBox > QPushButton {
+    padding: 10px; background: #1c1cac; color: white;
+}
+
+QLabel#head {
+    background: #9900AA; color: white;
+    border: 1px solid black; border-radius: 3px;
+    font-weight: bold;
+}
+
+QLabel#activity {
+    font: %spx; background: #ffd4d4;
+    margin: 10px 0; padding: 50px 0;
+}
+
+QLabel#message {
+    font: %spx; background: white; color: #c04000;
+    border: 1px solid grey;
+    margin: 10px 0; padding: 20px 0;
+}
+
+QLabel#curinfo {
+    font-weight: bold;
+}
+
+QLabel#counts {
+    margin-bottom: 10px;
+}
+
+QDialog {
+    border: 3px solid black;
+    padding: 10px;
+}
