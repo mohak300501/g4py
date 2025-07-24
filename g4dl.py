@@ -1,16 +1,30 @@
 """
 g4py/g4dl.py
+- Geant4 download and installation automation
 """
 
 import os, platform, requests, subprocess
 from pathlib import Path
 from bs4 import BeautifulSoup as bs4
 
-subprocess.run(["echo", "''"])
-subprocess.run(["echo", "'********************************************** GEANT4 INSTALLATION AUTOMATION PROGRAM *********************************************'"])
-subprocess.run(["echo", "''"])
-subprocess.run(["echo", "'AUTHOR: MOHAK KETAN PATIL'"])
-subprocess.run(["echo", "''"])
+subprocess.run(["echo", """'
+-----------------------------------------------------------------------
+        ___________________   _____    _______________________  
+       /  _____/\_   _____/  /  _  \   \      \__    ___/  |  | 
+      /   \  ___ |    __)_  /  /_\  \  /   |   \|    | /   |  |_
+      \    \_\  \|        \/    |    \/    |    \    |/    `   /
+       \______  /_______  /\____|__  /\____|__  /____|\____   | 
+              \/        \/         \/         \/           |__| 
+
+            GEANT4 INSTALLATION AUTOMATION PROGRAM
+
+            AUTHOR: MOHAK KETAN PATIL
+
+            This program downloads and installs the latest
+            version of Geant4 from the official website.
+
+-----------------------------------------------------------------------
+'"""])
 
 absPath = Path().absolute()
 
@@ -206,7 +220,25 @@ if platform.system() == "Darwin":
     with open(os.path.join(os.path.expanduser('~'), '.zshrc'), "a") as zshrc:
         zshrc.write(f"source {g4_install_dir}/share/Geant4/geant4make/geant4make.sh")
 
-subprocess.run(["echo", "''"])
-subprocess.run(["echo", "'THANK YOU FOR USING THIS AUTOMATION PROGRAM TO INSTALL GEANT4'"])
-subprocess.run(["echo", "''"])
-subprocess.run(["echo", "'************************************************** GEANT4 INSTALLATION COMPLETED **************************************************'"])
+subprocess.run(["echo", """'
+-----------------------------------------------------------------------
+        ___________________   _____    _______________________  
+       /  _____/\_   _____/  /  _  \   \      \__    ___/  |  | 
+      /   \  ___ |    __)_  /  /_\  \  /   |   \|    | /   |  |_
+      \    \_\  \|        \/    |    \/    |    \    |/    `   /
+       \______  /_______  /\____|__  /\____|__  /____|\____   | 
+              \/        \/         \/         \/           |__| 
+
+            GEANT4 INSTALLATION COMPLETED
+
+            AUTHOR: MOHAK KETAN PATIL
+            GITHUB: mohak300501/g4py
+
+            Thank you for using this automation
+            program to download and install GEANT4.
+
+            [GEANT4 ASCII art generated from -
+                https://patorjk.com/software/taag/]
+
+-----------------------------------------------------------------------
+'"""])
