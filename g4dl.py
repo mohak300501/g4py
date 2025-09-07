@@ -3,9 +3,37 @@ g4py/g4dl.py
 - Geant4 download and installation automation
 """
 
-import os, platform, requests, subprocess
+import os, platform, requests, subprocess, argparse, sys
 from pathlib import Path
 from bs4 import BeautifulSoup as bs4
+from argparse import Namespace
+
+# ---------------- Argument Parser ----------------
+parser = argparse.ArgumentParser(
+    description="Geant4 download and installation automation",
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    epilog="""Examples:
+  ./g4dl
+      Downloads and installs the latest Geant4 version.
+
+  ./g4dl --version 11.2.1
+      Downloads and installs Geant4 version 11.2.1.
+
+  ./g4dl -V 10.7.3
+      Downloads and installs Geant4 version 10.7.3.
+"""
+)
+
+parser.add_argument(
+    "-V", "--version",
+    type=str,
+    help="Specify Geant4 version (e.g., 11.2.1). Defaults to latest if not provided."
+)
+
+class Args(Namespace):
+    version: str
+
+args: Args = parser.parse_args()
 
 subprocess.run(["echo", """'
 -----------------------------------------------------------------------
@@ -16,15 +44,16 @@ subprocess.run(["echo", """'
        \______  /_______  /\____|__  /\____|__  /____|\____   | 
               \/        \/         \/         \/           |__| 
 
-            GEANT4 INSTALLATION AUTOMATION PROGRAM
+            ✨ GEANT4 INSTALLATION AUTOMATION PROGRAM
 
             AUTHOR: MOHAK KETAN PATIL
 
-            This program downloads and installs the latest
+            This program downloads and installs the specified
             version of Geant4 from the official website.
 
 -----------------------------------------------------------------------
-'"""])
+'
+"""])
 
 absPath = Path().absolute()
 
@@ -32,12 +61,30 @@ absPath = Path().absolute()
 absPath <--
 """
 
-g4homePage = requests.get("https://geant4.web.cern.ch").content
-g4homePageParsed = bs4(g4homePage, "html5lib")
-g4LatestVersion = g4homePageParsed.find(string="Latest: ").find_next_sibling("a").text
+# ---------------- Version Handling ----------------
+if args.version:
+    g4Version = args.version
+else:
+    g4homePage = requests.get("https://geant4.web.cern.ch").content
+    g4homePageParsed = bs4(g4homePage, "html5lib")
+    g4Version = g4homePageParsed.find(string="Latest: ").find_next_sibling("a").text
+    user_input = input(f"Download latest Geant4 version {g4Version}? [y/n]: ").strip().lower()
+    if user_input != 'y':
+        print("❌ Aborted download.\n")
+        sys.exit(0)
+    print(f"Downloading latest version...\n")
 
-g4dlPage = requests.get(f"https://geant4.web.cern.ch/download/{g4LatestVersion}.html").content
-g4dlPageParsed = bs4(g4dlPage, "html5lib")
+# ---------------- Download Page ----------------
+try:
+    g4dlPage = requests.get(f"https://geant4.web.cern.ch/download/{g4Version}.html")
+    g4dlPage.raise_for_status()
+    g4dlPageParsed = bs4(g4dlPage.content, "html5lib")
+except requests.exceptions.HTTPError:
+    subprocess.run(["echo", f"❌ ERROR: Geant4 version {g4Version} not found on the official website.\n"])
+    sys.exit(1)
+except Exception:
+    subprocess.run(["echo", f"❌ ERROR: Failed to fetch Geant4 version {g4Version}. Please check your network or version number.\n"])
+    sys.exit(1)
 
 # Download link for tar file of Geant4
 g4tarLink = g4dlPageParsed.find(string="Download tar.gz").parent["href"]
@@ -46,10 +93,10 @@ g4tarLink = g4dlPageParsed.find(string="Download tar.gz").parent["href"]
 g4datasetATags = g4dlPageParsed.find("h4", {"id": "datasets"}).find_next_sibling("p").find_all("a")
 
 # Directory paths
-g4_dir         = f"{absPath}/geant4-v{g4LatestVersion}"
-g4_build_dir   = f"{absPath}/geant4-v{g4LatestVersion}-build"
-g4_install_dir = f"{absPath}/geant4-v{g4LatestVersion}-install"
-g4_tars_dir    = f"{absPath}/geant4-v{g4LatestVersion}-tars"
+g4_dir         = f"{absPath}/geant4-v{g4Version}"
+g4_build_dir   = f"{absPath}/geant4-v{g4Version}-build"
+g4_install_dir = f"{absPath}/geant4-v{g4Version}-install"
+g4_tars_dir    = f"{absPath}/geant4-v{g4Version}-tars"
 g4_data_dir    = f"{g4_install_dir}/share/Geant4/data"
 
 if platform.system() == "Linux":
@@ -78,7 +125,7 @@ if platform.system() == "Darwin":
     subprocess.run(["brew", "install", "qt@5"])
     subprocess.run(["brew", "install", "xerces-c"])
     subprocess.run(["curl", "-OL", g4tarLink])
-    subprocess.run(["tar", "-xvf", f"geant4-v{g4LatestVersion}.tar.gz"])
+    subprocess.run(["tar", "-xvf", f"geant4-v{g4Version}.tar.gz"])
 
 if platform.system() == "Windows":
     subprocess.run(["winget", "install", "kitware.cmake"])
@@ -229,7 +276,7 @@ subprocess.run(["echo", """'
        \______  /_______  /\____|__  /\____|__  /____|\____   | 
               \/        \/         \/         \/           |__| 
 
-            GEANT4 INSTALLATION COMPLETED
+            ✅ GEANT4 INSTALLATION COMPLETED
 
             AUTHOR: MOHAK KETAN PATIL
             GITHUB: mohak300501/g4py
